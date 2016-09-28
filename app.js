@@ -9,11 +9,16 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var photos = require('./routes/photos.js');
 
+var multipart = require('connect-multiparty');
+
 var app = express();
+var multipartMiddleware = multipart();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.set('photos', path.join(__dirname, 'public/photos'));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -26,6 +31,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/photos', photos.list);
+
+app.get('/upload', photos.form);
+app.post('/upload',multipartMiddleware , photos.submit(app.get('photos')));
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,3 +1,9 @@
+var Photo = require('../models/Photo');
+var path = require('path');
+var fs = require('fs');
+
+var join = path.join;
+
 var photos = [];
 photos.push({
 	name: 'Anna Kendrick',
@@ -9,8 +15,42 @@ photos.push({
 });
 
 exports.list = function(request, response) {
-	response.render('photos', {
-		title: 'Photos',
-		photos: photos
+	Photo.find({}, function(err, photos) {
+		if (err) {
+			return next(err);
+		}
+		response.render('photos', {
+			title: 'Photos',
+			photos: photos
+		});
 	});
+};
+
+exports.form = function(request, response) {
+	response.render('photos/upload', {
+		title: 'Photo upload'
+	});
+};
+
+exports.submit = function(dir) {
+	return function(request, response) {
+		var img = request.files.image;
+		var name = request.body.name;
+		var path = join(dir, img.name);
+
+		fs.rename(img.path, path, function(err) {
+			if (err) {
+				return next(err);
+			}
+			Photo.create({
+				name: name,
+				path: img.name
+			}, function(err) {
+				if (err) {
+					return next(err);
+				}
+				response.redirect('/photos');
+			});
+		});
+	}
 };
