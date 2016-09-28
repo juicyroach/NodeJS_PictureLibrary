@@ -33,7 +33,7 @@ app.use('/users', users);
 app.use('/photos', photos.list);
 
 app.get('/upload', photos.form);
-app.post('/upload',multipartMiddleware , photos.submit(app.get('photos')));
+app.post('/upload', multipartMiddleware, photos.submit(app.get('photos')));
 
 
 // catch 404 and forward to error handler

@@ -19,7 +19,7 @@ exports.list = function(request, response) {
 		if (err) {
 			return next(err);
 		}
-		response.render('photos', {
+		response.render('photos/photos', {
 			title: 'Photos',
 			photos: photos
 		});
